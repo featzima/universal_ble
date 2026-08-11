@@ -197,18 +197,11 @@ class CharacteristicWriteFuture {
     }
 }
 
-class PendingWriteWithoutResponse {
+struct PendingWriteWithoutResponse {
     let deviceId: String
     let characteristic: CBCharacteristic
     let data: Data
     let result: (Result<Void, Error>) -> Void
-
-    init(deviceId: String, characteristic: CBCharacteristic, data: Data, result: @escaping (Result<Void, Error>) -> Void) {
-        self.deviceId = deviceId
-        self.characteristic = characteristic
-        self.data = data
-        self.result = result
-    }
 }
 
 class CharacteristicNotifyFuture {

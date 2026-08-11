@@ -443,10 +443,9 @@ private class BleCentralDarwin: NSObject, UniversalBlePlatformChannel, CBCentral
       return
     }
 
-    let type = bleOutputProperty == .withoutResponse ? CBCharacteristicWriteType.withoutResponse : CBCharacteristicWriteType.withResponse
-
-    if type == CBCharacteristicWriteType.withResponse {
-      if !gattCharacteristic.properties.contains(.write) {
+    switch bleOutputProperty {
+    case .withResponse:
+      guard gattCharacteristic.properties.contains(.write) else {
         completion(Result.failure(createFlutterError(code: .characteristicDoesNotSupportWrite, message: "Characteristic does not support write withResponse")))
         return
       }
@@ -459,26 +458,25 @@ private class BleCentralDarwin: NSObject, UniversalBlePlatformChannel, CBCentral
         )
       )
       peripheral.writeValue(value.data, for: gattCharacteristic, type: .withResponse)
-      return
-    }
+    case .withoutResponse:
+      guard gattCharacteristic.properties.contains(.writeWithoutResponse) else {
+        completion(Result.failure(createFlutterError(code: .characteristicDoesNotSupportWriteWithoutResponse, message: "Characteristic does not support write withoutResponse")))
+        return
+      }
 
-    if !gattCharacteristic.properties.contains(.writeWithoutResponse) {
-      completion(Result.failure(createFlutterError(code: .characteristicDoesNotSupportWriteWithoutResponse, message: "Characteristic does not support write withoutResponse")))
-      return
-    }
-
-    if peripheral.canSendWriteWithoutResponse {
-      peripheral.writeValue(value.data, for: gattCharacteristic, type: .withoutResponse)
-      completion(Result.success(()))
-    } else {
-      pendingWriteWithoutResponse.append(
-        PendingWriteWithoutResponse(
-          deviceId: deviceId,
-          characteristic: gattCharacteristic,
-          data: value.data,
-          result: completion
+      if peripheral.canSendWriteWithoutResponse {
+        peripheral.writeValue(value.data, for: gattCharacteristic, type: .withoutResponse)
+        completion(Result.success(()))
+      } else {
+        pendingWriteWithoutResponse.append(
+          PendingWriteWithoutResponse(
+            deviceId: deviceId,
+            characteristic: gattCharacteristic,
+            data: value.data,
+            result: completion
+          )
         )
-      )
+      }
     }
   }
 

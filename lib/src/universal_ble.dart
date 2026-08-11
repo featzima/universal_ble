@@ -347,7 +347,7 @@ class UniversalBle {
     // CoreBluetooth (and Chromium on Apple platforms) owns a native GATT
     // operation queue. Let consecutive writes fill it without letting either
     // writes or other operations cross a queue barrier.
-    await _bleCommandQueue.queueCommand(
+    await _bleCommandQueue.queueWrite(
       () => _platform.writeValue(
         deviceId,
         BleUuidParser.string(service),
@@ -360,13 +360,9 @@ class UniversalBle {
       timeout: timeout,
       deviceId: deviceId,
       queueId: queueId,
-      canRunConcurrently: _usesNativeWriteQueue,
+      pipelined: _platform.supportsWritePipelining,
     );
   }
-
-  static bool get _usesNativeWriteQueue =>
-      defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.macOS;
 
   /// Requests an MTU (Maximum Transmission Unit) value for the connection.
   ///

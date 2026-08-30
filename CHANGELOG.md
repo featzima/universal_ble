@@ -1,3 +1,7 @@
+## Unreleased
+* Windows: support connectionless manufacturer-data advertising without a GATT service, including state/error reporting and cleanup on stop/disposal.
+* Report manufacturer-data advertising capabilities accurately on iOS/macOS.
+
 ## 2.2.0
 * Expose microsecond scan timestamps captured before Flutter event dispatch
 * Lower minimum Dart SDK to 3.3 (Flutter 3.19+) to restore compatibility with older stable Flutter releases

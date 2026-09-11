@@ -1,3 +1,7 @@
+## Unreleased
+* Android: Complete MTU requests on the main thread, register waiters before the native request, and fail rejected requests immediately.
+* Android: Reuse an MTU already negotiated on the current GATT connection; keep reconnects and late callbacks isolated.
+
 ## 2.3.0
 * Windows: support connectionless manufacturer-data advertising without a GATT service, including state/error reporting and cleanup on stop/disposal.
 * Apple: Accurately report manufacturer-data advertising capabilities.
